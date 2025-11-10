@@ -1,15 +1,8 @@
 <?php 
     include 'conexao.php';
-    
-    if(isset($_POST['btnBuscar'])){
-        $cidade = $_POST['txtCidade'];
-        $sql = $pdo->prepare("SELECT * FROM viewProdutosLoja 
-        WHERE cidade LIKE ?");
-        $sql->execute(['%'.$cidade.'%']);
-
-    } else {
-        $sql = $pdo->query("SELECT * FROM viewProdutosLoja");
-    }
+    $cidade = $_POST['txtCidade'];
+    $sql = $pdo->prepare("SELECT * FROM viewProdutosLoja WHERE cidade LIKE ?");
+    $sql->execute(['%'.$cidade.'%']);
 ?>
 
 <!DOCTYPE html>
