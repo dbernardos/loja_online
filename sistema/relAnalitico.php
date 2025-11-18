@@ -16,6 +16,19 @@ $precoMaxEletronico = $sql->fetch(PDO::FETCH_ASSOC)['maximo'];
 // 4. Produtos lançados há mais de 6 meses
 $sql = $pdo->query("SELECT * FROM Produto WHERE data_lancamento < DATE_SUB(NOW(), INTERVAL 6 MONTH)");
 $produtos6mais = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+// 5. Produto mais caro e mais barato
+$sql = $pdo->query("SELECT nome, preco FROM Produto WHERE preco in 
+                    ((SELECT MAX(preco) FROM Produto), (SELECT MIN(preco) FROM Produto) )");
+$maisCaroMaisBarato = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+// 6. Contagem de caracteres na descrição dos produtos
+$sql = $pdo->query("SELECT nome, LENGTH(descricao) as contagem FROM Produto");
+$tamanhoDescricao = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+// 7. Nome e descrição das caracteristicas
+$sql = $pdo->query("SELECT nome, LEFT(descricao, 30) as descricao30 FROM Caracteristica");
+$descricaoCaracteristicas = $sql->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -45,6 +58,13 @@ $produtos6mais = $sql->fetchAll(PDO::FETCH_ASSOC);
         .icon-placeholder {
             font-size: 2.5rem;
             color: #0d6efd;
+        }
+                .card-header {
+            font-weight: bold;
+            background-color: #f8f9fa;
+        }
+        .list-group-item {
+            border-left: 3px solid #0d6efd;
         }
     </style>
 </head>
@@ -88,7 +108,7 @@ $produtos6mais = $sql->fetchAll(PDO::FETCH_ASSOC);
                     Lista dos produtos lançados há mais de 6 meses
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">
+                    <h7 class="card-title">
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead class="table-light">
@@ -108,7 +128,82 @@ $produtos6mais = $sql->fetchAll(PDO::FETCH_ASSOC);
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
-                    </h5>
+                        </div>    
+                    </h7>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Produto mais caro e mais barato
+                </div>
+                <div class="card-body">
+                    <h7 class="card-title">
+                            <ul class="list-group">
+                            <?php foreach ($maisCaroMaisBarato as $prod): ?>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span><?= htmlspecialchars($prod['nome']) ?></span>   
+                                    <span>R$ <?= number_format($prod['preco'], 2, ',', '.') ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </h7>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Contagem de caracteres na descrição dos produtos
+                </div>
+                <div class="card-body">
+                    <h7 class="card-title">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>N. Caracteres da Descrição</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($tamanhoDescricao as $prod): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($prod['nome']) ?></td>
+                                            <td><?= htmlspecialchars($prod['contagem']) ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>    
+                    </h7>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Caracteristicas dos produtos
+                </div>
+                <div class="card-body">
+                    <h7 class="card-title">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Descrição</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($descricaoCaracteristicas as $char): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($char['nome']) ?></td>
+                                            <td><?= htmlspecialchars($char['descricao30']) ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>    
+                    </h7>
                 </div>
             </div>
 
